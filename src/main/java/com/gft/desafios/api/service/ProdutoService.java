@@ -22,7 +22,11 @@ public class ProdutoService {
 		return produtoRepository.findProdutoByIdGreaterThan(id,pageable);
 	}
 	
-//	public Produto saveProduto(Produto produto) {
-//		return produtoRepository.save(produto);
-//	}
+	public Produto saveProduto(Produto produto) {
+		return produtoRepository.save(produto);
+	}
+	
+	public void excuirProduto(Long produto) {
+		produtoRepository.deleteById(produto);
+	}
 }
