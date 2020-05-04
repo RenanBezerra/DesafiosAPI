@@ -10,8 +10,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.springframework.hateoas.RepresentationModel;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Entity
-public class Produto {
+public class Produto extends RepresentationModel<Produto>{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
