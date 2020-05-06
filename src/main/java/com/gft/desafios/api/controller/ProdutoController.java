@@ -61,9 +61,26 @@ public class ProdutoController {
 		return produtoService.findProdutoByIdGreaterThan(id, pageable);
 	}
 
+//	@GetMapping(value = "/{id}", produces = "application/json")
+//	public @ResponseBody Produto produto(@PathVariable(value = "id") Long id) {
+//		Produto produto = produtoRepository.findByCodigo(id);
+//		produto.add(linkTo(methodOn(ProdutoController.class).listaProdutos()).withRel("Lista de Produtos");
+//		
+//		return produto;
+//	}
+
 	@GetMapping("/{ProdutoId}")
-	public Optional<Produto> buscaPorId(@PathVariable Long ProdutoId) {
-		return produtoRepository.findById(ProdutoId);
+	public ResponseEntity<Produto> buscaPorId(@PathVariable Long ProdutoId) {
+		// Optional<Produto> produto = produtoRepository.findById(ProdutoId);
+//			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class)
+//				.withSelfRel());
+		Optional<Produto> produto = produtoRepository.findById(ProdutoId);
+
+		if (produto.isPresent()) {
+			return ResponseEntity.ok(produto.get());
+		}
+
+		return ResponseEntity.notFound().build();
 	}
 
 	@PostMapping
@@ -73,12 +90,16 @@ public class ProdutoController {
 		return produtoService.saveProduto(produto);
 	}
 
-	@PutMapping("/{ProdutoId}")
-	public Produto atualiza(@PathVariable Long ProdutoId, @RequestBody Produto produto) {
-		Produto atualizar = new Produto();
-		atualizar = produtoRepository.save(produto);
+	@PutMapping("/{produtoId}")
+	public ResponseEntity<Produto> atualizar(@Valid @PathVariable Long produtoId, @RequestBody Produto produto) {
 
-		return atualizar;
+		if (!produtoRepository.existsById(produtoId)) {
+			return ResponseEntity.notFound().build();
+		}
+		produto.setId(produtoId);
+		produto = produtoService.saveProduto(produto);
+		return ResponseEntity.ok(produto);
+
 	}
 
 	@DeleteMapping("/{ProdutoId}")

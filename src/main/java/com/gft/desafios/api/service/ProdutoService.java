@@ -29,4 +29,8 @@ public class ProdutoService {
 	public void excuirProduto(Long produto) {
 		produtoRepository.deleteById(produto);
 	}
+	
+//	public Optional<Produto> buscaOuFalha(Long produtoId){
+//		return produtoRepository.findById(produtoId);
+//	}
 }
