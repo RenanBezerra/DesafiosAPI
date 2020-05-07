@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -38,8 +39,8 @@ public class ProdutoController {
 	private ProdutoService produtoService;
 
 	@GetMapping("/diretoBanco")
-	public @ResponseBody ArrayList<Produto> listaProdutos() {
-		Iterable<Produto> listaProdutos = produtoRepository.findAll();
+	public @ResponseBody ArrayList<Produto> listaProdutos(Pageable pageable) {
+		Iterable<Produto> listaProdutos = produtoService.getProdutos(pageable);
 		ArrayList<Produto> produtos = new ArrayList<Produto>();
 		for (Produto produto : listaProdutos) {
 			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class).slash(produto.getId()).withSelfRel());
@@ -49,6 +50,19 @@ public class ProdutoController {
 		return produtos;
 
 	}
+
+//	@GetMapping("/diretoBanco")
+//	public @ResponseBody ArrayList<Produto> listaProdutos() {
+//		Iterable<Produto> listaProdutos = produtoRepository.findAll();
+//		ArrayList<Produto> produtos = new ArrayList<Produto>();
+//		for (Produto produto : listaProdutos) {
+//			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class).slash(produto.getId()).withSelfRel());
+//			produtos.add(produto);
+//		}
+//
+//		return produtos;
+//
+//	}
 
 	@GetMapping
 	public Page<Produto> getProdutos(Pageable pageable) {
@@ -61,20 +75,9 @@ public class ProdutoController {
 		return produtoService.findProdutoByIdGreaterThan(id, pageable);
 	}
 
-//	@GetMapping(value = "/{id}", produces = "application/json")
-//	public @ResponseBody Produto produto(@PathVariable(value = "id") Long id) {
-//		Produto produto = produtoRepository.findByCodigo(id);
-//		produto.add(linkTo(methodOn(ProdutoController.class).listaProdutos()).withRel("Lista de Produtos");
-//		
-//		return produto;
-//	}
-
 	@GetMapping("/{ProdutoId}")
 	public ResponseEntity<Produto> buscaPorId(@PathVariable Long ProdutoId) {
-		// Optional<Produto> produto = produtoRepository.findById(ProdutoId);
-//			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class)
-//				.withSelfRel());
-		Optional<Produto> produto = produtoRepository.findById(ProdutoId);
+		Optional<Produto> produto = produtoService.buscaOuFalha(ProdutoId);
 
 		if (produto.isPresent()) {
 			return ResponseEntity.ok(produto.get());
@@ -105,11 +108,16 @@ public class ProdutoController {
 	@DeleteMapping("/{ProdutoId}")
 	public ResponseEntity<Void> excluir(@PathVariable Long ProdutoId) {
 
-		if (!produtoRepository.existsById(ProdutoId)) {
-			return ResponseEntity.notFound().build();
-		}
+		try {
 
-		produtoService.excuirProduto(ProdutoId);
-		return ResponseEntity.noContent().build();
+			if (!produtoRepository.existsById(ProdutoId)) {
+				return ResponseEntity.notFound().build();
+			}
+
+			produtoService.excuirProduto(ProdutoId);
+			return ResponseEntity.noContent().build();
+		} catch (DataIntegrityViolationException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).build();
+		}
 	}
 }

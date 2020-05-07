@@ -1,5 +1,7 @@
 package com.gft.desafios.api.service;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,7 +32,10 @@ public class ProdutoService {
 		produtoRepository.deleteById(produto);
 	}
 	
-//	public Optional<Produto> buscaOuFalha(Long produtoId){
-//		return produtoRepository.findById(produtoId);
-//	}
+	public Optional<Produto> buscaOuFalha(Long produtoId){
+		return produtoRepository.findById(produtoId);
+	}
+
+	
+	
 }
