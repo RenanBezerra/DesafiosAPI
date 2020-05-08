@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,36 +19,31 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gft.desafios.api.service.ProdutoService;
 import com.gft.desafios.domain.model.Produto;
-import com.gft.desafios.domain.repository.ProdutoRepository;
 
 @RestController
 @RequestMapping("/listaProdutos")
 public class ProdutoController {
 
 	@Autowired
-	private ProdutoRepository produtoRepository;
-
-	@Autowired
 	private ProdutoService produtoService;
 
-	@GetMapping("/diretoBanco")
-	public @ResponseBody ArrayList<Produto> listaProdutos(Pageable pageable) {
-		Iterable<Produto> listaProdutos = produtoService.getProdutos(pageable);
-		ArrayList<Produto> produtos = new ArrayList<Produto>();
-		for (Produto produto : listaProdutos) {
-			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class).slash(produto.getId()).withSelfRel());
-			produtos.add(produto);
-		}
-
-		return produtos;
-
-	}
+//	@GetMapping("/direto")
+//	public @ResponseBody ArrayList<Produto> listaProdutos(Pageable pageable) {
+//		Iterable<Produto> listaProdutos = produtoService.getProdutos(pageable);
+//		ArrayList<Produto> produtos = new ArrayList<Produto>();
+//		for (Produto produto : listaProdutos) {
+//			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class).slash(produto.getId()).withSelfRel());
+//			produtos.add(produto);
+//		}
+//
+//		return produtos;
+//
+//	}
 
 //	@GetMapping("/diretoBanco")
 //	public @ResponseBody ArrayList<Produto> listaProdutos() {
@@ -65,7 +59,7 @@ public class ProdutoController {
 //	}
 
 	@GetMapping
-	public Page<Produto> getProdutos(Pageable pageable) {
+	public ArrayList<Produto> getProdutos(Pageable pageable) {
 		return produtoService.getProdutos(pageable);
 
 	}
@@ -96,7 +90,7 @@ public class ProdutoController {
 	@PutMapping("/{produtoId}")
 	public ResponseEntity<Produto> atualizar(@Valid @PathVariable Long produtoId, @RequestBody Produto produto) {
 
-		if (!produtoRepository.existsById(produtoId)) {
+		if (!produtoService.existsById(produtoId)) {
 			return ResponseEntity.notFound().build();
 		}
 		produto.setId(produtoId);
@@ -110,7 +104,7 @@ public class ProdutoController {
 
 		try {
 
-			if (!produtoRepository.existsById(ProdutoId)) {
+			if (!produtoService.existsById(ProdutoId)) {
 				return ResponseEntity.notFound().build();
 			}
 
