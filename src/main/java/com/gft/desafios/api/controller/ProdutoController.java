@@ -1,6 +1,8 @@
 package com.gft.desafios.api.controller;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -10,8 +12,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gft.desafios.api.service.ProdutoService;
 import com.gft.desafios.domain.model.Produto;
 
@@ -112,6 +117,36 @@ public class ProdutoController {
 		} catch (DataIntegrityViolationException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
+	}
+
+	@PatchMapping("/{produtoId}")
+	public ResponseEntity<?> atualizarParcial(@PathVariable Long produtoId, @RequestBody Map<String, Object> campos) {
+		Produto produtoAtual = produtoService.buscaOuFalha(produtoId);
+
+		if (produtoAtual == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		merge(campos, produtoAtual);
+
+		return atualizar(produtoId, produtoAtual);
+
+	}
+
+	private void merge(Map<String, Object> dadosOrigem, Produto produtoDestino) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		Produto produtoOrigem = objectMapper.convertValue(dadosOrigem, Produto.class);
+
+		dadosOrigem.forEach((nomePropriedade, valorPropriedade) -> {
+			Field field = ReflectionUtils.findField(Produto.class, nomePropriedade);
+			field.setAccessible(true);
+
+			Object novoValor = ReflectionUtils.getField(field, produtoOrigem);
+
+			System.out.println(nomePropriedade + "=" + valorPropriedade);
+
+			ReflectionUtils.setField(field, produtoDestino, novoValor);
+		});
 	}
 
 }
