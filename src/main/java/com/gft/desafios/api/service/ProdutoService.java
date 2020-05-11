@@ -1,7 +1,6 @@
 package com.gft.desafios.api.service;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,7 +20,7 @@ public class ProdutoService {
 	
 	
 	public ArrayList<Produto> getProdutos(Pageable pageable) {
-		Iterable<Produto> listaProdutos = produtoRepository.findAll(pageable);
+		Iterable<Produto> listaProdutos = produtoRepository.listar(pageable);
 		ArrayList<Produto> produtos = new ArrayList<Produto>();
 		for (Produto produto : listaProdutos) {
 			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class).slash(produto.getId()).withSelfRel());
@@ -43,21 +42,21 @@ public class ProdutoService {
 	}
 	
 	public Produto saveProduto(Produto produto) {
-		return produtoRepository.save(produto);
+		return produtoRepository.salvar(produto);
 	}
 	
 	public void excuirProduto(Long produto) {
-		produtoRepository.deleteById(produto);
+		produtoRepository.remover(produto);
 	}
 	
-	public Optional<Produto> buscaOuFalha(Long produtoId){
+	public Produto buscaOuFalha(Long produtoId){
 		
 		
-		return produtoRepository.findById(produtoId);
+		return produtoRepository.buscar(produtoId);
 	}
 
-	public boolean existsById(Long produtoId) {
-		return produtoRepository.existsById(produtoId);
+	public Produto existsById(Long produtoId) {
+		return produtoRepository.buscar(produtoId);
 	}
 
 	

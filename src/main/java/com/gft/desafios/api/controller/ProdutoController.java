@@ -1,7 +1,6 @@
 package com.gft.desafios.api.controller;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -71,10 +70,10 @@ public class ProdutoController {
 
 	@GetMapping("/{ProdutoId}")
 	public ResponseEntity<Produto> buscaPorId(@PathVariable Long ProdutoId) {
-		Optional<Produto> produto = produtoService.buscaOuFalha(ProdutoId);
+		Produto produto = produtoService.buscaOuFalha(ProdutoId);
 
-		if (produto.isPresent()) {
-			return ResponseEntity.ok(produto.get());
+		if (produto != null) {
+			return ResponseEntity.ok(produto);
 		}
 
 		return ResponseEntity.notFound().build();
@@ -90,7 +89,7 @@ public class ProdutoController {
 	@PutMapping("/{produtoId}")
 	public ResponseEntity<Produto> atualizar(@Valid @PathVariable Long produtoId, @RequestBody Produto produto) {
 
-		if (!produtoService.existsById(produtoId)) {
+		if (produtoService.existsById(produtoId) == null) {
 			return ResponseEntity.notFound().build();
 		}
 		produto.setId(produtoId);
@@ -99,19 +98,20 @@ public class ProdutoController {
 
 	}
 
-	@DeleteMapping("/{ProdutoId}")
-	public ResponseEntity<Void> excluir(@PathVariable Long ProdutoId) {
+	@DeleteMapping("/{produtoId}")
+	public ResponseEntity<Void> excluir(@PathVariable Long produtoId) {
 
 		try {
 
-			if (!produtoService.existsById(ProdutoId)) {
+			if (produtoService.existsById(produtoId) == null) {
 				return ResponseEntity.notFound().build();
 			}
 
-			produtoService.excuirProduto(ProdutoId);
+			produtoService.excuirProduto(produtoId);
 			return ResponseEntity.noContent().build();
 		} catch (DataIntegrityViolationException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).build();
 		}
 	}
+
 }

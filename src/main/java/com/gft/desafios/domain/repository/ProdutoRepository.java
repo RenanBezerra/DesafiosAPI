@@ -1,16 +1,24 @@
 package com.gft.desafios.domain.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import com.gft.desafios.domain.model.Produto;
 
-@Repository
-public interface ProdutoRepository extends JpaRepository<Produto, Long>{
+public interface ProdutoRepository {
 
-	Page<Produto> findProdutoByIdGreaterThan(Long id,Pageable pageable);
+	Page<Produto> findProdutoByIdGreaterThan(Long id, Pageable pageable);
+
+	List<Produto> listar(Pageable pageable);
+
+	Produto buscar(Long id);
+	
+	Produto salvar(Produto produto);
+
+	void remover(Long id);
 
 	
+
 }
