@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import com.gft.desafios.domain.model.Produto;
+
 @Component
 public interface ProdutoRepository {
 

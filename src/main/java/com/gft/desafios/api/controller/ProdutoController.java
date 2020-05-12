@@ -36,32 +36,6 @@ public class ProdutoController {
 	@Autowired
 	private ProdutoService produtoService;
 
-//	@GetMapping("/direto")
-//	public @ResponseBody ArrayList<Produto> listaProdutos(Pageable pageable) {
-//		Iterable<Produto> listaProdutos = produtoService.getProdutos(pageable);
-//		ArrayList<Produto> produtos = new ArrayList<Produto>();
-//		for (Produto produto : listaProdutos) {
-//			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class).slash(produto.getId()).withSelfRel());
-//			produtos.add(produto);
-//		}
-//
-//		return produtos;
-//
-//	}
-
-//	@GetMapping("/diretoBanco")
-//	public @ResponseBody ArrayList<Produto> listaProdutos() {
-//		Iterable<Produto> listaProdutos = produtoRepository.findAll();
-//		ArrayList<Produto> produtos = new ArrayList<Produto>();
-//		for (Produto produto : listaProdutos) {
-//			produto.add(WebMvcLinkBuilder.linkTo(ProdutoController.class).slash(produto.getId()).withSelfRel());
-//			produtos.add(produto);
-//		}
-//
-//		return produtos;
-//
-//	}
-
 	@GetMapping
 	public ArrayList<Produto> getProdutos(Pageable pageable) {
 		return produtoService.getProdutos(pageable);

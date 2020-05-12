@@ -29,10 +29,6 @@ public class ProdutoService {
 		return produtos;
 	}
 
-//	public Page<Produto> getProdutos(Pageable pageable){
-//		return produtoRepository.findAll(pageable);
-//	}
-
 	public List<Produto> buscaPorCategoria(String categoria) {
 
 		return produtoRepository.consultaPorCategoria(categoria);
