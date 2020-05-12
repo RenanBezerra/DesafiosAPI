@@ -2,13 +2,13 @@ package com.gft.desafios.api.controller;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,9 +68,9 @@ public class ProdutoController {
 
 	}
 
-	@GetMapping("/maiorQue")
-	public Page<Produto> getProdutoIdMaiorQue(@RequestParam("id") Long id, Pageable pageable) {
-		return produtoService.findProdutoByIdGreaterThan(id, pageable);
+	@GetMapping("/por-nome")
+	public List<Produto> getProdutoPorCategoria(@RequestParam("categoria") String categoria) {
+		return produtoService.buscaPorCategoria(categoria);
 	}
 
 	@GetMapping("/{ProdutoId}")

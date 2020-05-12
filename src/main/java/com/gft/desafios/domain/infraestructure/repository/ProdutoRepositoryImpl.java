@@ -7,14 +7,13 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import com.gft.desafios.domain.model.Produto;
 import com.gft.desafios.domain.repository.ProdutoRepository;
 
-@Component
+@Repository
 public class ProdutoRepositoryImpl implements ProdutoRepository {
 
 	@PersistenceContext
@@ -47,10 +46,11 @@ public class ProdutoRepositoryImpl implements ProdutoRepository {
 		manager.remove(produto);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Page<Produto> findProdutoByIdGreaterThan(Long id, Pageable pageable) {
-		return (Page<Produto>) manager.createQuery("from Produto", Produto.class).getResultList();
+	public List<Produto> consultaPorCategoria(String categoria) {
+		return manager.createQuery("from Produto where categoria like :categoria", Produto.class)
+				.setParameter("categoria","%" + categoria + "%")
+				.getResultList();
 	}
 
 }
